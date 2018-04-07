@@ -16,6 +16,7 @@ class AuthenticationPostListener
     use Unserializable;
 
     protected $container;
+    protected $objectManager;
 
     public function __construct(ContainerInterface $container)
     {
@@ -35,7 +36,7 @@ class AuthenticationPostListener
             throw new AccessTokenException('Access Token expected for authenticated identity not found');
         }
 
-        $doctrineAuthenticatedIdentity = new DoctrineAuthenticatedIdentity($accessToken, $mvcAuthEvent->getAuthorizationService());
+        $doctrineAuthenticatedIdentity = new DoctrineAuthenticatedIdentity($accessToken, $this->objectManager, $mvcAuthEvent->getAuthorizationService());
         $mvcAuthEvent->getMvcEvent()->setParam('ZF\MvcAuth\Identity', $doctrineAuthenticatedIdentity);
         $mvcAuthEvent->setIdentity($doctrineAuthenticatedIdentity);
     }
@@ -58,6 +59,8 @@ class AuthenticationPostListener
                 if ($accessToken) {
                     if ($accessToken->getClient()->getClientId() == $identity['client_id']) {
                         // Match found
+                        $this->objectManager = $objectManager;
+
                         return $accessToken;
                     }
                 }

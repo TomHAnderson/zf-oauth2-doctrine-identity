@@ -48,10 +48,10 @@ class UserTest extends AbstractTest
         $this->assertTrue($identity->getAuthorizationService() instanceof \ZF\MvcAuth\Authorization\AuthorizationInterface);
         $this->assertEquals('doctrine', $identity->getRoleId());
         $this->assertTrue(is_array($identity->getAuthenticationIdentity()));
+        $this->assertEquals($objectManager, $identity->getObjectManager());
     }
 
     /**
-     * @expectedE xception ZF\OAuth2\Doctrine\Permissions\Acl\Exception\AccessTokenException
      */
     public function testInvalidAccessToken()
     {

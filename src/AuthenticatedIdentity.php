@@ -2,12 +2,13 @@
 
 namespace ZF\OAuth2\Doctrine\Identity;
 
-use ZF\MvcAuth\Identity\IdentityInterface;
-use ZF\MvcAuth\Authorization\AuthorizationInterface;
 use Zend\Permissions\Rbac\AbstractRole as AbstractRbacRole;
 use Zend\Permissions\Acl\Acl;
-use ZF\OAuth2\Doctrine\Identity\Exception;
+use ZF\MvcAuth\Identity\IdentityInterface;
+use ZF\MvcAuth\Authorization\AuthorizationInterface;
+use Doctrine\Common\Persistence\ObjectManager;
 use GianArb\Angry\Uninvokable;
+use ZF\OAuth2\Doctrine\Identity\Exception;
 
 class AuthenticatedIdentity extends AbstractRbacRole implements
     IdentityInterface
@@ -15,12 +16,14 @@ class AuthenticatedIdentity extends AbstractRbacRole implements
     use Uninvokable;
 
     protected $accessToken;
+    protected $objectManager;
     protected $authorizationService;
     protected $name;
 
-    public function __construct($accessToken, AuthorizationInterface $authorizationService, $name = 'doctrine')
+    public function __construct($accessToken, ObjectManager $objectManager, AuthorizationInterface $authorizationService, $name = 'doctrine')
     {
         $this->accessToken = $accessToken;
+        $this->objectManager = $objectManager;
         $this->authorizationService = $authorizationService;
         $this->name = $name;
     }
@@ -79,5 +82,10 @@ class AuthenticatedIdentity extends AbstractRbacRole implements
     public function getAccessToken()
     {
         return $this->accessToken;
+    }
+
+    public function getObjectManager()
+    {
+        return $this->objectManager;
     }
 }
